@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  @apply bg-[url(@/assets/img/space-bg.png)] text-white;
+  @apply bg-[url(@/assets/img/space-bg.png)] bg-fixed bg-cover bg-center text-white;
 }
 
 * {
