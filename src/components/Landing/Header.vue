@@ -4,7 +4,9 @@ import { ref } from 'vue'
 </script>
 
 <template>
-  <div class="flex items-center justify-between border-b-4 border-white p-8 h-28">
+  <div
+    class="w-auto top-0 flex items-center justify-between bg-black border-b-4 border-white p-8 h-28 z-10"
+  >
     <img class="flex-none w-auto h-24" :src="headerLogo" alt="TimeLock" />
     <div class="flex items-center px-12 gap-8">
       <button
