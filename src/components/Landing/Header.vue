@@ -1,6 +1,24 @@
 <script setup>
-import headerLogo from '@/assets/img/headerLogo.png'
 import { ref } from 'vue'
+import headerLogo from '@/assets/img/headerLogo.png'
+import LoginOverlay from '@/components/Landing/LoginOverlay.vue'
+import SignupOverlay from './SignupOverlay.vue'
+
+const overlayLoginOptions = ref({
+  show: false,
+})
+
+const overlaySignupOptions = ref({
+  show: false,
+})
+
+const openLoginOverlay = () => {
+  overlayLoginOptions.value.show = true
+}
+
+const openSignupOverlay = () => {
+  overlaySignupOptions.value.show = true
+}
 </script>
 
 <template>
@@ -10,17 +28,21 @@ import { ref } from 'vue'
     <img class="flex-none w-auto h-24" :src="headerLogo" alt="TimeLock" />
     <div class="flex items-center px-12 gap-8">
       <button
-        class="uppercase w-32 h-12 bg-black font-['Inter'] font-semibold text-lg outline outline-1 rounded-lg hover:bg-gray-900 hover:scale-105 transition-all duration-300 ease-in-out"
+        class="uppercase w-32 h-12 bg-black font-['Inter'] font-semibold text-lg outline outline-1 rounded-lg hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"
         type="button"
+        @click="openLoginOverlay"
       >
         Login
       </button>
       <button
-        class="uppercase w-32 h-12 bg-white font-['Inter'] font-semibold text-black text-lg rounded-lg hover:bg-gray-200 hover:scale-105 transition-all duration-300 ease-in-out"
+        class="uppercase w-32 h-12 bg-white font-['Inter'] font-semibold text-black text-lg rounded-lg hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"
         type="button"
+        @click="openSignupOverlay"
       >
         Sign Up
       </button>
     </div>
   </div>
+  <LoginOverlay :overlayOptions="overlayLoginOptions" />
+  <SignupOverlay :overlayOptions="overlaySignupOptions" />
 </template>

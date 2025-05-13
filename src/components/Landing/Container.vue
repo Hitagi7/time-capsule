@@ -3,7 +3,16 @@ import bigLogo from '@/assets/img/bigLogo.png'
 import leftStar from '@/assets/img/left-star.png'
 import rightStar from '@/assets/img/right-star.png'
 import hourglass from '@/assets/img/hourglass.png'
+import LoginOverlay from '@/components/Landing/LoginOverlay.vue'
 import { ref } from 'vue'
+
+const overlayLoginOptions = ref({
+  show: false,
+})
+
+const openLoginOverlay = () => {
+  overlayLoginOptions.value.show = true
+}
 </script>
 
 <template>
@@ -30,12 +39,14 @@ import { ref } from 'vue'
       </p>
       <h1 class="text-2xl font-bold">THE FUTURE IS WAITING. WHAT WILL YOU SAY?</h1>
       <button
-        class="w-80 h-12 py-6 bg-white rounded-xl inline-flex justify-center items-center gap-2.5 overflow-hidden text-black text-lg font-semibold font-['Inter']"
+        class="w-80 h-12 py-6 bg-white rounded-xl inline-flex justify-center items-center gap-2.5 overflow-hidden text-black text-lg font-semibold font-['Inter'] hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"
+        @click="openLoginOverlay"
       >
         WRITE YOUR MESSAGE
       </button>
     </div>
   </div>
+  <LoginOverlay :overlayOptions="overlayLoginOptions" />
 </template>
 
 <style>
