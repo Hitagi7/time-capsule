@@ -4,9 +4,7 @@ import { ref } from 'vue'
 </script>
 
 <template>
-  <div
-    class="flex items-center justify-between bg-black border-t-4 border-white p-8 h-28 z-10 mt-24"
-  >
+  <div class="flex items-center justify-between bg-black border-t-4 border-white p-8 h-28 z-10">
     <img class="w-auto h-24" :src="headerLogo" alt="TimeLock" />
     <h2 class="text-lg font-['Inter']">
       Privacy Policy<br />
