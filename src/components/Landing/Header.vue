@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import headerLogo from '@/assets/img/headerLogo.png'
 import LoginOverlay from '@/components/Landing/LoginOverlay.vue'
-import SignupOverlay from './SignupOverlay.vue'
+import SignupOverlay from '@/components/Landing/SignupOverlay.vue'
 
 const overlayLoginOptions = ref({
   show: false,
@@ -13,11 +13,21 @@ const overlaySignupOptions = ref({
 })
 
 const openLoginOverlay = () => {
+  overlaySignupOptions.value.show = false
   overlayLoginOptions.value.show = true
 }
 
 const openSignupOverlay = () => {
+  overlayLoginOptions.value.show = false
   overlaySignupOptions.value.show = true
+}
+
+const closeLoginOverlay = () => {
+  overlayLoginOptions.value.show = false
+}
+
+const closeSignupOverlay = () => {
+  overlaySignupOptions.value.show = false
 }
 </script>
 
@@ -43,6 +53,14 @@ const openSignupOverlay = () => {
       </button>
     </div>
   </div>
-  <LoginOverlay :overlayOptions="overlayLoginOptions" />
-  <SignupOverlay :overlayOptions="overlaySignupOptions" />
+  <LoginOverlay
+    :overlayOptions="overlayLoginOptions"
+    :closeLogin="closeLoginOverlay"
+    :openSignup="openSignupOverlay"
+  />
+  <SignupOverlay
+    :overlayOptions="overlaySignupOptions"
+    :closeSignup="closeSignupOverlay"
+    :openLogin="openLoginOverlay"
+  />
 </template>

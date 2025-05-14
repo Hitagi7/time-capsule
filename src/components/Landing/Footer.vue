@@ -7,7 +7,7 @@ import { ref } from 'vue'
   <div
     class="flex items-center justify-between bg-black border-t-4 border-white p-8 h-28 z-10 mt-24"
   >
-    <img class="flex-none w-auto h-24" :src="headerLogo" alt="TimeLock" />
+    <img class="w-auto h-24" :src="headerLogo" alt="TimeLock" />
     <h2 class="text-lg font-['Inter']">
       Privacy Policy<br />
       ©2025 TimeLock All Rights Reserved
