@@ -42,7 +42,7 @@ const closeSignupOverlay = () => {
         type="button"
         @click="openLoginOverlay"
       >
-        Login
+        Log in
       </button>
       <button
         class="uppercase w-32 h-12 bg-white font-['Inter'] font-semibold text-black text-lg rounded-lg hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"

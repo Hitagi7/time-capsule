@@ -61,7 +61,7 @@ const handleLogin = () => {
               type="submit"
               class="shadow-xl py-6 h-20 bg-black rounded-xl inline-flex justify-center items-center text-white text-lg font-bold font-['Inter'] hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"
             >
-              Login
+              Log in
             </button>
             <button
               @click="props.closeLogin"
