@@ -31,12 +31,12 @@ const handleSignup = () => {
     >
       <div class="bg-[#393939] rounded-xl overflow-hidden px-16 py-12">
         <div class="flex justify-between mb-8">
-          <h2 class="w-96 text-white text-3xl font-bold font-['Inter']">Sign up to TimeLock</h2>
+          <h2 class="w-96 text-white text-3xl font-bold font-inter">Sign up to TimeLock</h2>
         </div>
         <form @submit.prevent="handleSignup">
           <div class="flex flex-col gap-6">
             <div class="flex flex-col gap-3">
-              <label class="font-semibold font-['Inter']">Email</label>
+              <label class="font-semibold font-inter">Email</label>
               <div>
                 <img class="absolute ml-4 mt-2.5" :src="mailIcon" alt="Mail Icon" />
                 <input
@@ -49,7 +49,7 @@ const handleSignup = () => {
               </div>
             </div>
             <div class="flex flex-col gap-3">
-              <label class="font-semibold font-['Inter']">Password</label>
+              <label class="font-semibold font-inter">Password</label>
               <div>
                 <img class="absolute ml-4 mt-2.5" :src="passwordIcon" alt="Password Icon" />
                 <input
@@ -62,7 +62,7 @@ const handleSignup = () => {
               </div>
             </div>
             <div class="flex flex-col gap-3">
-              <label class="font-semibold font-['Inter']">Confirm Password</label>
+              <label class="font-semibold font-inter">Confirm Password</label>
               <div>
                 <img class="absolute ml-4 mt-2.5" :src="passwordIcon" alt="Password Icon" />
                 <input
@@ -78,24 +78,24 @@ const handleSignup = () => {
           <div class="flex flex-col gap-6 mt-8">
             <button
               type="submit"
-              class="shadow-xl py-6 h-20 bg-black rounded-xl inline-flex justify-center items-center text-white text-lg font-bold font-['Inter'] hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"
+              class="shadow-xl py-6 h-20 bg-black rounded-xl inline-flex justify-center items-center text-white text-lg font-bold font-inter hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"
             >
               Create Account
             </button>
             <button
               @click="props.closeSignup"
               type="button"
-              class="shadow-xl py-6 h-12 bg-white rounded-xl inline-flex justify-center items-center text-black text-lg font-bold font-['Inter'] hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"
+              class="shadow-xl py-6 h-12 bg-white rounded-xl inline-flex justify-center items-center text-black text-lg font-bold font-inter hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"
             >
               Cancel
             </button>
 
             <p
-              class="bg-inherit text-white text-sm font-normal font-['Inter'] text-center justify-start"
+              class="bg-inherit text-white text-sm font-normal font-inter text-center justify-start"
             >
               Already have an account?
               <span
-                class="text-indigo-400 text-sm font-normal font-['Inter'] underline hover:cursor-pointer hover:text-indigo-500"
+                class="text-indigo-400 text-sm font-normal font-inter underline hover:cursor-pointer hover:text-indigo-500"
                 @click="props.openLogin"
                 >Log in.</span
               >

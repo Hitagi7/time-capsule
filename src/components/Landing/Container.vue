@@ -58,7 +58,7 @@ const closeSignupOverlay = () => {
       </p>
       <h1 class="text-2xl font-bold">THE FUTURE IS WAITING. WHAT WILL YOU SAY?</h1>
       <button
-        class="w-80 h-12 py-6 bg-white rounded-xl inline-flex justify-center items-center gap-2.5 overflow-hidden text-black text-lg font-semibold font-['Inter'] hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"
+        class="w-80 h-12 py-6 bg-white rounded-xl inline-flex justify-center items-center gap-2.5 text-black text-lg font-semibold font-inter animated"
         @click="openLoginOverlay"
       >
         WRITE YOUR MESSAGE
@@ -80,6 +80,6 @@ const closeSignupOverlay = () => {
 <style>
 p,
 h1 {
-  @apply bg-black bg-opacity-70 p-1 text-white text-2xl font-normal font-['Space_Mono'] leading-10 tracking-wide;
+  @apply bg-black bg-opacity-70 p-1 text-white text-2xl font-normal font-spaceMono leading-10 tracking-wide;
 }
 </style>

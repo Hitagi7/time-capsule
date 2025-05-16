@@ -38,14 +38,14 @@ const closeSignupOverlay = () => {
     <img class="flex-none w-auto h-24" :src="headerLogo" alt="TimeLock" />
     <div class="flex items-center px-12 gap-8">
       <button
-        class="uppercase w-32 h-12 bg-black font-['Inter'] font-semibold text-lg outline outline-1 rounded-lg hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"
+        class="uppercase w-32 h-12 bg-black font-inter font-semibold text-lg outline outline-1 rounded-lg hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"
         type="button"
         @click="openLoginOverlay"
       >
         Log in
       </button>
       <button
-        class="uppercase w-32 h-12 bg-white font-['Inter'] font-semibold text-black text-lg rounded-lg hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"
+        class="uppercase w-32 h-12 bg-white font-inter font-semibold text-black text-lg rounded-lg hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"
         type="button"
         @click="openSignupOverlay"
       >
