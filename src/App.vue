@@ -1,9 +1,23 @@
 <script setup>
-import Landing from '@/components/Pages/Landing.vue'
-import Dashboard from '@/components/Pages/Dashboard.vue'
+import UserDashboard from '@/components/Pages/Dashboard.vue'
 </script>
 
 <template>
   <!-- <Landing /> -->
-  <Dashboard />
+  <UserDashboard />
 </template>
+
+<style>
+html,
+body {
+  overflow: hidden;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  height: 100%;
+  width: 100%;
+}
+</style>

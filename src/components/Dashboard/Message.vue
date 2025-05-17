@@ -41,7 +41,7 @@ const messages = [
 <template>
   <div class="flex items-center justify-around">
     <div
-      class="flex content-start flex-wrap-reverse justify-evenly w-[480px] h-[700px] p-14 bg-center bg-no-repeat bg-contain"
+      class="flex content-start flex-wrap-reverse justify-evenly w-[450px] h-[650px] p-14 bg-center bg-no-repeat bg-contain"
       :style="{ backgroundImage: `url(${jar})` }"
     >
       <img
