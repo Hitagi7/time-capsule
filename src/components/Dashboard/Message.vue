@@ -4,7 +4,7 @@ import jar from '@/assets/img/jar.png'
 import star from '@/assets/img/star.png'
 import starGlow from '@/assets/img/starGlow.png'
 
-const numberOfStars = ref(8)
+const numberOfStars = ref(20)
 const rotations = [15, -10, 25, -20, 35]
 const statusOverlay = ref(false)
 const hoveredIndex = ref(null)
@@ -17,7 +17,7 @@ const getStarSrc = (index) => {
 const handleMouseEnter = (index) => {
   hoveredIndex.value = index
   statusOverlay.value = true
-  userMessage.value = messages[index]
+  userMessage.value = messages[index % 8]
 }
 
 const handleMouseLeave = () => {
