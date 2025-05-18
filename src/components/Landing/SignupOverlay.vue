@@ -5,21 +5,50 @@ import passwordIcon from '@/assets/icons/passwordIcon.svg'
 
 const props = defineProps(['overlayOptions', 'closeSignup', 'openLogin'])
 
-// variable to control the visibility of the overlay using the passed object
 const showOverlay = computed(() => props.overlayOptions.show)
 
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
+const errorMsg = ref('')
+const successMsg = ref('')
 
-const handleSignup = () => {
+const handleSignup = async () => {
+  errorMsg.value = ''
+  successMsg.value = ''
   if (password.value !== confirmPassword.value) {
-    alert('Passwords do not match')
+    errorMsg.value = 'Passwords do not match'
     return
   }
-
-  console.log('Sign Up with', { email: email.value, password: password.value })
-  props.closeSignup
+  try {
+    const res = await fetch('http://localhost/Finals/time-capsule/backend/signup.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email.value, password: password.value })
+    })
+    let data
+    try {
+      data = await res.json()
+    } catch (jsonErr) {
+      errorMsg.value = 'Invalid server response.'
+      return
+    }
+    if (!res.ok) {
+      errorMsg.value = data?.message || 'Server error. Please try again later.'
+      return
+    }
+    if (data.success) {
+      successMsg.value = data.message
+      setTimeout(() => {
+        props.closeSignup()
+        props.openLogin()
+      }, 1200)
+    } else {
+      errorMsg.value = data.message
+    }
+  } catch (e) {
+    errorMsg.value = 'Server error. Please try again later.'
+  }
 }
 </script>
 
@@ -35,6 +64,8 @@ const handleSignup = () => {
         </div>
         <form @submit.prevent="handleSignup">
           <div class="flex flex-col gap-6">
+            <div v-if="errorMsg" class="text-red-400 font-inter mb-2">{{ errorMsg }}</div>
+            <div v-if="successMsg" class="text-green-400 font-inter mb-2">{{ successMsg }}</div>
             <div class="flex flex-col gap-3">
               <label class="font-semibold font-inter">Email</label>
               <div>
@@ -89,7 +120,6 @@ const handleSignup = () => {
             >
               Cancel
             </button>
-
             <p
               class="bg-inherit text-white text-sm font-normal font-inter text-center justify-start"
             >

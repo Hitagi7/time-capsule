@@ -4,6 +4,6 @@ import Dashboard from '@/components/Pages/Dashboard.vue'
 </script>
 
 <template>
-  <!-- <Landing /> -->
-  <Dashboard />
+  <!-- <Dashboard /> -->
+  <Landing />
 </template>

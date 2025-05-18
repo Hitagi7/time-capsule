@@ -5,15 +5,29 @@ import passwordIcon from '@/assets/icons/passwordIcon.svg'
 
 const props = defineProps(['overlayOptions', 'closeLogin', 'openSignup'])
 
-// variable to control the visibility of the overlay using the passed object
 const showOverlay = computed(() => props.overlayOptions.show)
 
 const email = ref('')
 const password = ref('')
+const errorMsg = ref('')
 
-const handleLogin = () => {
-  console.log('Login with', { email: email.value, password: password.value })
-  props.closeLogin()
+const handleLogin = async () => {
+  errorMsg.value = ''
+  try {
+    const res = await fetch('http://localhost/Finals/time-capsule/backend/login.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email.value, password: password.value })
+    })
+    const data = await res.json()
+    if (data.success) {
+      props.closeLogin()
+    } else {
+      errorMsg.value = data.message
+    }
+  } catch (e) {
+    errorMsg.value = 'Please Sign-Up if you dont have an account yet.'
+  }
 }
 </script>
 
@@ -29,6 +43,7 @@ const handleLogin = () => {
         </div>
         <form @submit.prevent="handleLogin">
           <div class="flex flex-col gap-6">
+            <div v-if="errorMsg" class="text-red-400 font-inter mb-2">{{ errorMsg }}</div>
             <div class="flex flex-col gap-3">
               <label class="font-semibold font-inter">Email</label>
               <div>
