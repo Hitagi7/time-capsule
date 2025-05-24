@@ -40,11 +40,10 @@ const closeSignupOverlay = () => {
     <div class="flex flex-col justify-center items-center text-center">
       <img :src="bigLogo" alt="TimeLock" />
       <p class="w-[876px] text-center">
-        Welcome to <strong>TimeLock</strong>
-        , where your words travel through time. Write a message today, set the date, and let it
-        drift through the cosmos until it’s unlocked in the future. Capture a moment, share a
-        secret, or send a wish to tomorrow. Your stories will wait, patiently suspended in time,
-        ready to be discovered.
+        Welcome to <strong>TimeLock</strong>, where your words travel through time. Write a message
+        today, set the date, and let it drift through the cosmos until it’s unlocked in the future.
+        Capture a moment, share a secret, or send a wish to tomorrow. Your stories will wait,
+        patiently suspended in time, ready to be discovered.
       </p>
     </div>
     <img :src="rightStar" alt="Right Stars" class="w-[420px] translate-y-40" />

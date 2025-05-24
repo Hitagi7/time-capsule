@@ -12,42 +12,68 @@ const password = ref('')
 const confirmPassword = ref('')
 const errorMsg = ref('')
 const successMsg = ref('')
+const isLoading = ref(false)
 
 const handleSignup = async () => {
   errorMsg.value = ''
   successMsg.value = ''
+
+  // Validate form inputs
+  if (!email.value || !password.value) {
+    errorMsg.value = 'Please enter both email and password'
+    return
+  }
+
   if (password.value !== confirmPassword.value) {
     errorMsg.value = 'Passwords do not match'
     return
   }
+
+  if (password.value.length < 8) {
+    errorMsg.value = 'Password must be at least 8 characters'
+    return
+  }
+
+  isLoading.value = true
+
   try {
-    const res = await fetch('http://localhost/Finals/time-capsule/backend/signup.php', {
+    const res = await fetch('http://localhost/time-capsule/src/backend/signup.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.value, password: password.value })
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value,
+        confirmPassword: confirmPassword.value,
+      }),
     })
+
     let data
     try {
       data = await res.json()
     } catch (jsonErr) {
-      errorMsg.value = 'Invalid server response.'
+      console.error('JSON parsing error:', jsonErr)
+      errorMsg.value = 'Invalid server response. Please try again.'
+      isLoading.value = false
       return
     }
+
     if (!res.ok) {
-      errorMsg.value = data?.message || 'Server error. Please try again later.'
+      errorMsg.value = data?.error || 'Server error. Please try again later.'
+      isLoading.value = false
       return
     }
-    if (data.success) {
-      successMsg.value = data.message
-      setTimeout(() => {
-        props.closeSignup()
-        props.openLogin()
-      }, 1200)
-    } else {
-      errorMsg.value = data.message
-    }
+
+    // Success case - server returned OK status
+    successMsg.value = data.message || 'Account created successfully!'
+    setTimeout(() => {
+      props.closeSignup()
+      props.openLogin()
+    }, 1200)
   } catch (e) {
-    errorMsg.value = 'Server error. Please try again later.'
+    console.error('Fetch error:', e)
+    errorMsg.value = 'Unable to connect to the server. Please check your connection.'
+  } finally {
+    isLoading.value = false
   }
 }
 </script>
@@ -109,9 +135,10 @@ const handleSignup = async () => {
           <div class="flex flex-col gap-6 mt-8">
             <button
               type="submit"
+              :disabled="isLoading"
               class="shadow-xl py-6 h-20 bg-black rounded-xl inline-flex justify-center items-center text-white text-lg font-bold font-inter hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"
             >
-              Create Account
+              {{ isLoading ? 'Creating Account...' : 'Create Account' }}
             </button>
             <button
               @click="props.closeSignup"

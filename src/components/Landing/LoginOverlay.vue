@@ -1,8 +1,10 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import mailIcon from '@/assets/icons/mailIcon.svg'
 import passwordIcon from '@/assets/icons/passwordIcon.svg'
 
+const router = useRouter()
 const props = defineProps(['overlayOptions', 'closeLogin', 'openSignup'])
 
 const showOverlay = computed(() => props.overlayOptions.show)
@@ -10,23 +12,33 @@ const showOverlay = computed(() => props.overlayOptions.show)
 const email = ref('')
 const password = ref('')
 const errorMsg = ref('')
+const isLoading = ref(false)
 
 const handleLogin = async () => {
   errorMsg.value = ''
+  isLoading.value = true
+
   try {
-    const res = await fetch('http://localhost/Finals/time-capsule/backend/login.php', {
+    const res = await fetch('http://localhost/time-capsule/src/backend/login.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.value, password: password.value })
+      body: JSON.stringify({ email: email.value, password: password.value }),
     })
     const data = await res.json()
     if (data.success) {
+      // Store user data
+      localStorage.setItem('userEmail', email.value)
+      // Close login overlay
       props.closeLogin()
+      // Redirect to dashboard
+      router.push('/dashboard')
     } else {
       errorMsg.value = data.message
     }
-  } catch (e) {
+  } catch {
     errorMsg.value = 'Please Sign-Up if you dont have an account yet.'
+  } finally {
+    isLoading.value = false
   }
 }
 </script>
@@ -74,14 +86,16 @@ const handleLogin = async () => {
           <div class="flex flex-col gap-6 mt-8">
             <button
               type="submit"
-              class="shadow-xl py-6 h-20 bg-black rounded-xl inline-flex justify-center items-center text-white text-lg font-bold font-inter hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"
+              :disabled="isLoading"
+              class="shadow-xl py-6 h-20 bg-black rounded-xl inline-flex justify-center items-center text-white text-lg font-bold font-inter hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Log in
+              {{ isLoading ? 'Logging in...' : 'Log in' }}
             </button>
             <button
               @click="props.closeLogin"
               type="button"
-              class="shadow-xl py-6 h-12 bg-white rounded-xl inline-flex justify-center items-center text-black text-lg font-bold font-inter hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out"
+              :disabled="isLoading"
+              class="shadow-xl py-6 h-12 bg-white rounded-xl inline-flex justify-center items-center text-black text-lg font-bold font-inter hover:opacity-80 hover:scale-105 transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
