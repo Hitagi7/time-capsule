@@ -1,8 +1,10 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import headerLogo from '@/assets/img/headerLogo.png'
 import iconUser from '@/assets/icons/icon-user.svg'
 
+const router = useRouter()
 const dropdownOptions = ref({
   show: false,
 })
@@ -11,6 +13,13 @@ const username = ref('P diddy')
 
 const handleDropdown = () => {
   dropdownOptions.value.show = !dropdownOptions.value.show
+}
+
+const handleLogout = () => {
+  // Clear user data from localStorage
+  localStorage.removeItem('userEmail')
+  // Redirect to landing page
+  router.push('/')
 }
 </script>
 
@@ -33,6 +42,7 @@ const handleDropdown = () => {
         <div
           class="fixed top-24 right-4 py-2 px-4 bg-white text-lg text-black outline outline-neutral-600 rounded-lg shadow-lg hover:cursor-pointer hover:opacity-80"
           v-if="dropdownOptions.show"
+          @click="handleLogout"
         >
           Log out
         </div>
