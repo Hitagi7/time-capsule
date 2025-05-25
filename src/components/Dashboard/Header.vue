@@ -25,7 +25,7 @@ const handleLogout = () => {
 
 <template>
   <div
-    class="w-auto top-0 flex items-center justify-between bg-black border-b-4 border-white p-8 h-28 z-10"
+    class="w-auto top-0 flex items-center justify-between bg-black border-b-4 border-white p-8 h-28 z-50"
   >
     <img class="w-auto h-24" :src="headerLogo" alt="TimeLock" />
     <div class="flex items-center gap-5 text-2xl font-semibold font-inter">
@@ -40,7 +40,7 @@ const handleLogout = () => {
       </div>
       <transition name="fade">
         <div
-          class="fixed top-24 right-4 py-2 px-4 bg-white text-lg text-black outline outline-neutral-600 rounded-lg shadow-lg hover:cursor-pointer hover:opacity-80"
+          class="fixed top-24 right-4 py-2 px-4 bg-white text-lg text-black outline outline-neutral-600 rounded-lg shadow-lg hover:cursor-pointer hover:opacity-80 z-50"
           v-if="dropdownOptions.show"
           @click="handleLogout"
         >
