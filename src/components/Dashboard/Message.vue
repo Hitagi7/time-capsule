@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import jar from '@/assets/img/jar.png'
 import star from '@/assets/img/star.png'
 import starGlow from '@/assets/img/starGlow.png'
@@ -9,12 +9,16 @@ import envelope from '@/assets/img/envelope.png'
 // Number of stars is now computed based on the messages array length
 const numberOfStars = computed(() => user.value.messages.length)
 const rotations = [15, -10, 25, -20, 35]
-const statusOverlay = ref(false)
+const statusOverlay = ref(true)
 const envelopeStatus = ref(false)
 const hoveredIndex = ref(null)
 const openDate = ref('')
 const showMessageOverlay = ref(false)
 const selectedMessageIndex = ref(null)
+
+// Add timer related refs and functions
+const timer = ref(null)
+const remainingTime = ref('00:00:00')
 
 // Sample user data structure for future backend integration
 const user = ref({
@@ -45,7 +49,7 @@ const user = ref({
       openDate: {
         month: 2,
         day: 14,
-        year: 2024,
+        year: 2040,
       },
       isOpened: false,
     },
@@ -65,7 +69,7 @@ const user = ref({
       openDate: {
         month: 4,
         day: 20,
-        year: 2024,
+        year: 2026,
       },
       isOpened: false,
     },
@@ -75,7 +79,7 @@ const user = ref({
       openDate: {
         month: 5,
         day: 25,
-        year: 2024,
+        year: 2027,
       },
       isOpened: false,
     },
@@ -85,7 +89,7 @@ const user = ref({
       openDate: {
         month: 6,
         day: 30,
-        year: 2024,
+        year: 2026,
       },
       isOpened: false,
     },
@@ -154,6 +158,8 @@ const handleMouseEnter = (index) => {
   hoveredIndex.value = index
   statusOverlay.value = true
   openDate.value = formatDate(user.value.messages[index].openDate)
+  // Update the timer immediately when hovering
+  updateTimer()
 }
 
 const handleMouseLeave = () => {
@@ -187,6 +193,38 @@ const deleteMessage = (index) => {
     closeMessageOverlay()
   }
 }
+
+const calculateTimeRemaining = (targetDate) => {
+  const now = new Date()
+  const target = new Date(targetDate.year, targetDate.month - 1, targetDate.day)
+  target.setHours(0, 0, 0, 0) // Set to midnight
+
+  const diff = target - now
+  if (diff <= 0) return '00:00:00'
+
+  const hours = Math.floor(diff / (1000 * 60 * 60))
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+}
+
+const updateTimer = () => {
+  if (hoveredIndex.value !== null) {
+    const message = user.value.messages[hoveredIndex.value]
+    remainingTime.value = calculateTimeRemaining(message.openDate)
+  }
+}
+
+onMounted(() => {
+  timer.value = setInterval(updateTimer, 1000)
+})
+
+onUnmounted(() => {
+  if (timer.value) {
+    clearInterval(timer.value)
+  }
+})
 </script>
 
 <template>
@@ -212,11 +250,23 @@ const deleteMessage = (index) => {
         <div v-if="statusOverlay" class="animate-popUp origin-center">
           <div class="relative">
             <img :src="getEnvelopeSrc()" alt="Envelope" class="scale-110" />
+            <p
+              class="font-spaceMono bg-transparent absolute top-[40%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-4xl"
+            >
+              {{ remainingTime }} <br />
+              left
+            </p>
             <div
               class="absolute top-[69%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center"
             >
-              <p class="font-spaceMono bg-transparent text-xl mb-[-15px]">OPEN ON</p>
-              <p class="font-spaceMono bg-transparent text-xl">{{ openDate }}</p>
+              <p class="font-spaceMono bg-transparent text-2xl mb-[-15px]">
+                {{
+                  hoveredIndex !== null && isMessageReadyToOpen(user.messages[hoveredIndex])
+                    ? 'OPENED ON'
+                    : 'OPEN ON'
+                }}
+              </p>
+              <p class="font-spaceMono bg-transparent text-2xl">{{ openDate }}</p>
             </div>
           </div>
         </div>
