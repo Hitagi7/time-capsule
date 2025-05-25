@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import headerLogo from '@/assets/img/headerLogo.png'
 import iconUser from '@/assets/icons/icon-user.svg'
@@ -9,7 +9,12 @@ const dropdownOptions = ref({
   show: false,
 })
 
-const username = ref('P diddy')
+const username = ref(localStorage.getItem('username') || 'User')
+
+// Update username on mount in case localStorage changes after login
+onMounted(() => {
+  username.value = localStorage.getItem('username') || 'User'
+})
 
 const handleDropdown = () => {
   dropdownOptions.value.show = !dropdownOptions.value.show
@@ -18,6 +23,7 @@ const handleDropdown = () => {
 const handleLogout = () => {
   // Clear user data from localStorage
   localStorage.removeItem('userEmail')
+  localStorage.removeItem('username')
   // Redirect to landing page
   router.push('/')
 }

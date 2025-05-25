@@ -7,6 +7,5 @@ import Message from '@/components/Dashboard/Message.vue'
 <!-- Ibutang ang tabs ari nga component, para pag pass ug object dali ra sa message.vue ug create.vue -->
 <template>
   <Header />
-  <Tabs />
   <Message />
 </template>

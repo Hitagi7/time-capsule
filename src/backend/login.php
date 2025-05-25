@@ -34,7 +34,7 @@ if ($conn->connect_error) {
     exit;
 }
 
-$stmt = $conn->prepare("SELECT password FROM users WHERE email = ?");
+$stmt = $conn->prepare("SELECT password, email FROM users WHERE email = ?");
 $stmt->bind_param("s", $input['email']);
 $stmt->execute();
 $stmt->store_result();
@@ -46,11 +46,17 @@ if ($stmt->num_rows === 0) {
     exit;
 }
 
-$stmt->bind_result($hashed_password);
+$stmt->bind_result($hashed_password, $email);
 $stmt->fetch();
 
 if (password_verify($input['password'], $hashed_password)) {
-    echo json_encode(['success' => true, 'message' => 'Login successful!']);
+    // Extract username from email (before @)
+    $username = explode('@', $email)[0];
+    echo json_encode([
+        'success' => true,
+        'message' => 'Login successful!',
+        'username' => $username
+    ]);
 } else {
     echo json_encode(['success' => false, 'message' => 'Incorrect password']);
 }

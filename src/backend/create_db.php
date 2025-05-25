@@ -27,6 +27,15 @@ $sql = "CREATE TABLE IF NOT EXISTS users (
     PRIMARY KEY (id)
 )";
 
+//CREATE TABLE messages (
+  //id INT AUTO_INCREMENT PRIMARY KEY,
+ // user_email VARCHAR(255) NOT NULL,
+ // content TEXT NOT NULL,
+ // open_date DATE NOT NULL,
+ // created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ // FOREIGN KEY (user_email) REFERENCES users(email) ON DELETE CASCADE
+//);
+
 if ($conn->query($sql) === TRUE) {
     echo "Table users created or already exists<br>";
 } else {
