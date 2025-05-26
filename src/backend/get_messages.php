@@ -23,7 +23,7 @@ if ($conn->connect_error) {
     exit;
 }
 
-$stmt = $conn->prepare("SELECT id, content, open_date FROM messages WHERE user_email = ? ORDER BY open_date ASC");
+$stmt = $conn->prepare("SELECT id, content, open_date, thread_id, sequence_number, total_in_sequence FROM messages WHERE user_email = ? ORDER BY open_date ASC");
 $stmt->bind_param("s", $input['userEmail']);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -39,6 +39,9 @@ while ($row = $result->fetch_assoc()) {
             'month' => $date['month'],
             'day' => $date['day'],
         ],
+        'threadId' => $row['thread_id'],
+        'sequenceNumber' => $row['sequence_number'],
+        'totalInSequence' => $row['total_in_sequence'],
         'isOpened' => false
     ];
 }

@@ -27,17 +27,40 @@ $sql = "CREATE TABLE IF NOT EXISTS users (
     PRIMARY KEY (id)
 )";
 
-//CREATE TABLE messages (
-  //id INT AUTO_INCREMENT PRIMARY KEY,
- // user_email VARCHAR(255) NOT NULL,
- // content TEXT NOT NULL,
- // open_date DATE NOT NULL,
- // created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
- // FOREIGN KEY (user_email) REFERENCES users(email) ON DELETE CASCADE
-//);
-
 if ($conn->query($sql) === TRUE) {
     echo "Table users created or already exists<br>";
+} else {
+    echo "Error creating table: " . $conn->error . "<br>";
+}
+
+// Create sequences table if it doesn't exist
+$sql = "CREATE TABLE IF NOT EXISTS sequences (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Table sequences created or already exists<br>";
+} else {
+    echo "Error creating table: " . $conn->error . "<br>";
+}
+
+// Create messages table if it doesn't exist
+$sql = "CREATE TABLE IF NOT EXISTS messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_email VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    open_date DATE NOT NULL,
+    thread_id INT DEFAULT NULL,
+    sequence_number INT DEFAULT NULL,
+    total_in_sequence INT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_email) REFERENCES users(email) ON DELETE CASCADE,
+    FOREIGN KEY (thread_id) REFERENCES sequences(id) ON DELETE SET NULL
+)";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Table messages created or already exists<br>";
 } else {
     echo "Error creating table: " . $conn->error . "<br>";
 }

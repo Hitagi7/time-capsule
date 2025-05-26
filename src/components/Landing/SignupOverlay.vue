@@ -37,7 +37,7 @@ const handleSignup = async () => {
   isLoading.value = true
 
   try {
-    const res = await fetch('http://localhost/Finals/time-capsule/src/backend/signup.php', {
+    const res = await fetch('http://localhost/time-capsule/src/backend/signup.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

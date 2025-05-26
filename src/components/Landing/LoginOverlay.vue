@@ -19,7 +19,7 @@ const handleLogin = async () => {
   isLoading.value = true
 
   try {
-    const res = await fetch('http://localhost/Finals/time-capsule/src/backend/login.php', {
+    const res = await fetch('http://localhost/time-capsule/src/backend/login.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: email.value, password: password.value }),

@@ -9,7 +9,9 @@ import createMessage from '@/assets/img/createMessage.png'
 import quill from '@/assets/img/quill.png'
 
 const tab = ref('message')
-const setTab = (val) => { tab.value = val }
+const setTab = (val) => {
+  tab.value = val
+}
 
 const userEmail = localStorage.getItem('userEmail')
 const user = ref({ messages: [] })
@@ -17,7 +19,7 @@ const selectedChapter = ref(null)
 
 const fetchMessages = async () => {
   if (!userEmail) return
-  const res = await fetch('http://localhost/Finals/time-capsule/src/backend/get_messages.php', {
+  const res = await fetch('http://localhost/time-capsule/src/backend/get_messages.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ userEmail }),
@@ -33,7 +35,7 @@ const deleteMessage = async (index) => {
   const group = groupedMessages.value[index]
   if (group.type === 'sequence') {
     for (const msg of group.messages) {
-      await fetch('http://localhost/Finals/time-capsule/src/backend/delete_message.php', {
+      await fetch('http://localhost/time-capsule/src/backend/delete_message.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: msg.id, userEmail }),
@@ -41,7 +43,7 @@ const deleteMessage = async (index) => {
     }
   } else {
     const msg = group.messages[0]
-    await fetch('http://localhost/Finals/time-capsule/src/backend/delete_message.php', {
+    await fetch('http://localhost/time-capsule/src/backend/delete_message.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: msg.id, userEmail }),
@@ -62,7 +64,12 @@ const timer = ref(null)
 const remainingTime = ref('00:00:00')
 
 const isPartOfSequence = (message) => {
-  return message.threadId !== undefined && message.sequenceNumber !== undefined
+  return (
+    message.threadId !== undefined &&
+    message.threadId !== null &&
+    message.sequenceNumber !== undefined &&
+    message.sequenceNumber !== null
+  )
 }
 
 const getSequenceMessages = (threadId) => {
@@ -92,8 +99,18 @@ const isMessageReadyToOpen = (message) => {
 const formatDate = (dateObj) => {
   if (!dateObj) return ''
   const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ]
   return `${months[dateObj.month - 1]} ${dateObj.day}, ${dateObj.year}`
 }
@@ -104,10 +121,11 @@ const groupedMessages = computed(() => {
 
   user.value.messages.forEach((message) => {
     if (isPartOfSequence(message)) {
-      if (!groups[message.threadId]) {
-        groups[message.threadId] = []
+      const key = message.threadId
+      if (!groups[key]) {
+        groups[key] = []
       }
-      groups[message.threadId].push(message)
+      groups[key].push(message)
     } else {
       standalone.push(message)
     }
@@ -281,10 +299,35 @@ const isRecurringMode = ref(false)
 const recurringInterval = ref(1)
 const messages = ref([''])
 
-const days = Array.from({ length: 31 }, (_, i) => i + 1)
+const isValidDate = (year, month, day) => {
+  const date = new Date(year, month, day)
+  return date.getFullYear() === year && date.getMonth() === month && date.getDate() === day
+}
+
+const getDaysInMonth = (year, month) => {
+  return new Date(year, month + 1, 0).getDate()
+}
+
+const days = computed(() => {
+  if (!selectedYear.value || selectedMonth.value === '')
+    return Array.from({ length: 31 }, (_, i) => i + 1)
+  const daysInMonth = getDaysInMonth(selectedYear.value, selectedMonth.value)
+  return Array.from({ length: daysInMonth }, (_, i) => i + 1)
+})
+
 const months = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ]
 const currentYear = new Date().getFullYear()
 const years = Array.from({ length: 10 }, (_, i) => currentYear + i)
@@ -331,6 +374,12 @@ const handleSubmit = async () => {
     return
   }
 
+  // Validate date
+  if (!isValidDate(selectedYear.value, selectedMonth.value, selectedDay.value)) {
+    errorMsg.value = 'Invalid date selected'
+    return
+  }
+
   if (isRecurringMode.value) {
     if (messages.value.some((msg) => !msg.trim())) {
       errorMsg.value = 'Please fill in all messages'
@@ -355,8 +404,20 @@ const handleSubmit = async () => {
 
   try {
     if (isRecurringMode.value) {
-      // Use add_sequence.php for recurring messages
-      await fetch('http://localhost/Finals/time-capsule/src/backend/add_sequence.php', {
+      // Validate all dates in the sequence
+      const interval = parseInt(recurringInterval.value)
+      const totalYears = (messages.value.length - 1) * interval
+      const finalDate = new Date(selectedYear.value, selectedMonth.value, selectedDay.value)
+      finalDate.setFullYear(finalDate.getFullYear() + totalYears)
+
+      if (!isValidDate(finalDate.getFullYear(), finalDate.getMonth(), finalDate.getDate())) {
+        errorMsg.value =
+          'Invalid date in sequence. The selected day might not exist in a future month.'
+        isLoading.value = false
+        return
+      }
+
+      await fetch('http://localhost/time-capsule/src/backend/add_sequence.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -371,7 +432,7 @@ const handleSubmit = async () => {
         }),
       })
     } else {
-      await fetch('http://localhost/Finals/time-capsule/src/backend/add_message.php', {
+      await fetch('http://localhost/time-capsule/src/backend/add_message.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -410,6 +471,21 @@ const handleSubmit = async () => {
     isLoading.value = false
   }
 }
+
+// Add this new method to compute future chapter dates
+const getChapterDate = (chapterIndex) => {
+  if (!selectedYear.value || selectedMonth.value === '' || !selectedDay.value) return ''
+
+  const date = new Date(selectedYear.value, selectedMonth.value, selectedDay.value)
+  if (chapterIndex > 0) {
+    date.setFullYear(date.getFullYear() + chapterIndex * recurringInterval.value)
+  }
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(date)
+}
 </script>
 
 <template>
@@ -421,14 +497,20 @@ const handleSubmit = async () => {
       <button
         @click="setTab('message')"
         class="w-36 h-14 border border-white animated"
-        :class="tab === 'message' ? 'text-black border-black bg-white' : 'text-white border-white bg-black'"
+        :class="
+          tab === 'message'
+            ? 'text-black border-black bg-white'
+            : 'text-white border-white bg-black'
+        "
       >
         MESSAGE
       </button>
       <button
         @click="setTab('create')"
         class="w-36 h-14 bg-black border border-white animated"
-        :class="tab === 'create' ? 'text-black border-black bg-white' : 'text-white border-white bg-black'"
+        :class="
+          tab === 'create' ? 'text-black border-black bg-white' : 'text-white border-white bg-black'
+        "
       >
         CREATE
       </button>
@@ -486,12 +568,29 @@ const handleSubmit = async () => {
                 class="absolute top-full left-0 w-full mt-2 bg-black border border-white rounded-lg p-6 z-50"
               >
                 <div class="grid grid-cols-3 gap-4">
+                  <!-- Year Selection -->
+                  <div class="flex flex-col gap-2">
+                    <label class="font-semibold font-spaceMono text-sm">YEAR</label>
+                    <select
+                      v-model="selectedYear"
+                      class="w-full px-3 py-2 rounded bg-white text-black focus:outline-none focus:ring-2 focus:ring-white"
+                      :class="{ 'opacity-50 cursor-not-allowed': false }"
+                    >
+                      <option value="" disabled>Year</option>
+                      <option v-for="year in years" :key="year" :value="year">
+                        {{ year }}
+                      </option>
+                    </select>
+                  </div>
+
                   <!-- Month Selection -->
                   <div class="flex flex-col gap-2">
                     <label class="font-semibold font-spaceMono text-sm">MONTH</label>
                     <select
                       v-model="selectedMonth"
                       class="w-full px-3 py-2 rounded bg-white text-black focus:outline-none focus:ring-2 focus:ring-white"
+                      :class="{ 'opacity-50 cursor-not-allowed': !selectedYear }"
+                      :disabled="!selectedYear"
                     >
                       <option value="" disabled>Month</option>
                       <option v-for="(month, index) in months" :key="month" :value="index">
@@ -506,6 +605,10 @@ const handleSubmit = async () => {
                     <select
                       v-model="selectedDay"
                       class="w-full px-3 py-2 rounded bg-white text-black focus:outline-none focus:ring-2 focus:ring-white"
+                      :class="{
+                        'opacity-50 cursor-not-allowed': !selectedYear || selectedMonth === '',
+                      }"
+                      :disabled="!selectedYear || selectedMonth === ''"
                     >
                       <option value="" disabled>Day</option>
                       <option v-for="day in days" :key="day" :value="day">
@@ -513,20 +616,13 @@ const handleSubmit = async () => {
                       </option>
                     </select>
                   </div>
+                </div>
 
-                  <!-- Year Selection -->
-                  <div class="flex flex-col gap-2">
-                    <label class="font-semibold font-spaceMono text-sm">YEAR</label>
-                    <select
-                      v-model="selectedYear"
-                      class="w-full px-3 py-2 rounded bg-white text-black focus:outline-none focus:ring-2 focus:ring-white"
-                    >
-                      <option value="" disabled>Year</option>
-                      <option v-for="year in years" :key="year" :value="year">
-                        {{ year }}
-                      </option>
-                    </select>
-                  </div>
+                <!-- Helper Text -->
+                <div class="mt-4 text-sm text-gray-300">
+                  <p v-if="!selectedYear">1. Select a year first</p>
+                  <p v-else-if="selectedMonth === ''">2. Now select a month</p>
+                  <p v-else-if="!selectedDay">3. Finally, select a day</p>
                 </div>
               </div>
             </div>
@@ -596,12 +692,29 @@ const handleSubmit = async () => {
                   class="absolute top-full left-0 w-full mt-2 bg-black border border-white rounded-lg p-6 z-50"
                 >
                   <div class="grid grid-cols-3 gap-4">
+                    <!-- Year Selection -->
+                    <div class="flex flex-col gap-2">
+                      <label class="font-semibold font-spaceMono text-sm">YEAR</label>
+                      <select
+                        v-model="selectedYear"
+                        class="w-full px-3 py-2 rounded bg-white text-black focus:outline-none focus:ring-2 focus:ring-white"
+                        :class="{ 'opacity-50 cursor-not-allowed': false }"
+                      >
+                        <option value="" disabled>Year</option>
+                        <option v-for="year in years" :key="year" :value="year">
+                          {{ year }}
+                        </option>
+                      </select>
+                    </div>
+
                     <!-- Month Selection -->
                     <div class="flex flex-col gap-2">
                       <label class="font-semibold font-spaceMono text-sm">MONTH</label>
                       <select
                         v-model="selectedMonth"
                         class="w-full px-3 py-2 rounded bg-white text-black focus:outline-none focus:ring-2 focus:ring-white"
+                        :class="{ 'opacity-50 cursor-not-allowed': !selectedYear }"
+                        :disabled="!selectedYear"
                       >
                         <option value="" disabled>Month</option>
                         <option v-for="(month, index) in months" :key="month" :value="index">
@@ -616,6 +729,10 @@ const handleSubmit = async () => {
                       <select
                         v-model="selectedDay"
                         class="w-full px-3 py-2 rounded bg-white text-black focus:outline-none focus:ring-2 focus:ring-white"
+                        :class="{
+                          'opacity-50 cursor-not-allowed': !selectedYear || selectedMonth === '',
+                        }"
+                        :disabled="!selectedYear || selectedMonth === ''"
                       >
                         <option value="" disabled>Day</option>
                         <option v-for="day in days" :key="day" :value="day">
@@ -623,19 +740,25 @@ const handleSubmit = async () => {
                         </option>
                       </select>
                     </div>
+                  </div>
 
-                    <!-- Year Selection -->
-                    <div class="flex flex-col gap-2">
-                      <label class="font-semibold font-spaceMono text-sm">YEAR</label>
-                      <select
-                        v-model="selectedYear"
-                        class="w-full px-3 py-2 rounded bg-white text-black focus:outline-none focus:ring-2 focus:ring-white"
-                      >
-                        <option value="" disabled>Year</option>
-                        <option v-for="year in years" :key="year" :value="year">
-                          {{ year }}
-                        </option>
-                      </select>
+                  <!-- Helper Text -->
+                  <div class="mt-4 text-sm text-gray-300">
+                    <p v-if="!selectedYear">1. Select a year first</p>
+                    <p v-else-if="selectedMonth === ''">2. Now select a month</p>
+                    <p v-else-if="!selectedDay">3. Finally, select a day</p>
+                  </div>
+
+                  <!-- Future Dates Preview -->
+                  <div
+                    v-if="selectedYear && selectedMonth !== '' && selectedDay"
+                    class="mt-4 border-t border-gray-700 pt-4"
+                  >
+                    <p class="font-semibold font-spaceMono text-sm mb-2">CHAPTER UNLOCK DATES:</p>
+                    <div class="text-sm text-gray-300">
+                      <div v-for="(msg, index) in messages" :key="index">
+                        Chapter {{ index + 1 }}: {{ getChapterDate(index) }}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -675,7 +798,7 @@ const handleSubmit = async () => {
         alt="quill"
         class="fixed bottom-20 right-80 w-42 h-42 z-60 cursor-pointer transition-transform duration-300 hover:rotate-45 hover:scale-190"
         @click="toggleRecurringMode"
-    />
+      />
     </div>
 
     <!-- MESSAGE TAB (jar, stars, overlays, etc) -->
@@ -698,13 +821,6 @@ const handleSubmit = async () => {
             @click="handleStarClick(index)"
             alt="Star"
           />
-          <button
-            @click.stop="deleteMessage(index)"
-            class="absolute -top-2 -right-2 bg-gray-200 text-black rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow hover:bg-gray-400 transition"
-            title="Delete"
-          >
-            ×
-          </button>
         </div>
       </div>
       <div class="w-[700px] h-[650px] -ml-20 pl-20">
@@ -786,7 +902,7 @@ const handleSubmit = async () => {
             >
               ×
             </button>
-            <div class= "bg-black p-6 text-white">
+            <div class="bg-black p-6 text-white">
               <h2 class="text-2xl font-bold font-spaceMono">
                 {{
                   groupedMessages[selectedMessageIndex].type === 'sequence'
@@ -875,6 +991,11 @@ const handleSubmit = async () => {
             </div>
             <div class="p-6 border-t border-gray-200 flex justify-end">
               <button
+                v-if="
+                  groupedMessages[selectedMessageIndex].type === 'sequence'
+                    ? groupedMessages[selectedMessageIndex].messages.every((msg) => msg.isOpened)
+                    : true
+                "
                 class="bg-gray-950 hover:bg-black text-white px-4 py-2 rounded font-spaceMono transition-colors"
                 @click="deleteMessage(selectedMessageIndex)"
               >
